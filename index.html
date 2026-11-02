@@ -1,147 +1,42 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CyberShield | Threat Detection Demo</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CyberShield Live Attack Lab</title>
 <style>
-:root{--bg:#08111f;--panel:#101d30;--panel2:#14243a;--line:#263a54;--text:#eaf2ff;--muted:#9db0c9;--green:#4ce0a0;--red:#ff657a;--amber:#ffcc66;--blue:#70b7ff}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top right,#142b48 0,#08111f 48%);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);min-height:100vh}
-.wrap{max-width:1120px;margin:auto;padding:28px 18px 50px}.top{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:24px}
-.brand{display:flex;gap:12px;align-items:center}.logo{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#1d8bff,#37e0b1);font-size:25px;color:#06111d;font-weight:900}
-h1{font-size:clamp(24px,4vw,34px);margin:0}.subtitle{color:var(--muted);margin-top:4px;font-size:14px}.pill{border:1px solid #276d58;color:var(--green);background:#0b2a27;padding:8px 12px;border-radius:999px;font-size:12px;font-weight:700}
-.notice{background:#10253a;border:1px solid #254360;padding:12px 14px;border-radius:12px;color:#c8d9ee;font-size:13px;line-height:1.5;margin-bottom:20px}
-.grid{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}.panel{background:rgba(16,29,48,.94);border:1px solid var(--line);border-radius:16px;padding:19px;box-shadow:0 12px 30px #0002}
-h2{font-size:17px;margin:0 0 6px}.hint{color:var(--muted);font-size:13px;margin:0 0 16px}
-.scenarios{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.scenario{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:13px;text-align:left;cursor:pointer;min-height:84px;transition:.15s}.scenario:hover{border-color:var(--blue);transform:translateY(-1px)}.scenario.active{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue) inset;background:#183553}.scenario strong{display:block;font-size:14px;margin-bottom:5px}.scenario span{font-size:12px;color:var(--muted)}
-button:focus-visible{outline:3px solid var(--amber);outline-offset:2px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:800;cursor:pointer;font-size:13px}.primary{background:linear-gradient(100deg,#42d9a1,#65c7ff);color:#071521}.secondary{background:#1b2c42;border:1px solid var(--line);color:var(--text)}.danger{background:#3a1e2b;border:1px solid #693142;color:#ffdce2}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:18px}.stat{background:#0b1728;border:1px solid var(--line);border-radius:12px;padding:13px}.stat small{display:block;color:var(--muted);font-size:12px}.stat strong{display:block;font-size:25px;margin-top:5px}.stat.alert strong{color:var(--red)}.stat.safe strong{color:var(--green)}
-.status{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;margin-bottom:12px}.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px #4ce0a080}
-.feed{display:flex;flex-direction:column;gap:9px;max-height:345px;overflow:auto}.event{border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:10px;background:#0b1728;padding:11px 12px}.event.alert{border-left-color:var(--red)}.event.safe{border-left-color:var(--green)}.event .row{display:flex;justify-content:space-between;gap:10px;align-items:center}.event strong{font-size:13px}.event time{font-size:11px;color:var(--muted)}.event p{font-size:12px;color:#b8c9df;margin:6px 0 0;line-height:1.45}.tag{font-size:10px;text-transform:uppercase;letter-spacing:.07em;font-weight:900;border-radius:5px;padding:4px 6px;background:#30202b;color:#ff9cac}.tag.safe{background:#12352d;color:#7ce6b9}
-.bottom{color:var(--muted);font-size:12px;text-align:center;margin-top:20px}.empty{color:var(--muted);font-size:13px;padding:20px;text-align:center;border:1px dashed var(--line);border-radius:10px}
-@media(max-width:760px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.stat{padding:10px}.stat strong{font-size:21px}}@media(max-width:420px){.scenarios{grid-template-columns:1fr}.stats{gap:6px}.stat small{font-size:10px}}
-</style>
-</head>
-<body>
-<div class="wrap">
-<header class="top">
-  <div class="brand"><div class="logo">盾</div><div><h1>CyberShield</h1><div class="subtitle">Interactive Threat Detection Demonstration</div></div></div>
-  <div class="pill">● DEMO SYSTEM ONLINE</div>
-</header>
-<div class="notice"><strong>Classroom simulation:</strong> This dashboard generates sample security events locally in your browser. It does not attack a real system, send network traffic, or provide real-world intrusion detection.</div>
-<div class="grid">
-<section class="panel">
-  <h2>Choose a scenario</h2><p class="hint">Select a simulated activity, then run it to generate events.</p>
-  <div class="scenarios" id="scenarios">
-    <button class="scenario active" data-kind="brute"><strong>🔐 Brute-force login</strong><span>Repeated failed sign-in attempts</span></button>
-    <button class="scenario" data-kind="sql"><strong>🧪 SQL injection</strong><span>Suspicious input pattern detection</span></button>
-    <button class="scenario" data-kind="xss"><strong>🕸️ Cross-site scripting (XSS)</strong><span>Script-like input detection</span></button>
-    <button class="scenario" data-kind="normal"><strong>✅ Normal traffic</strong><span>Benign activity and successful requests</span></button>
-  </div>
-  <div class="actions"><button id="runBtn" class="btn primary" type="button">▶ Run simulation</button><button id="clearBtn" class="btn secondary" type="button">Clear event feed</button></div>
-  <p class="hint" style="margin-top:13px;margin-bottom:0" id="selectedText">Selected: Brute-force login simulation.</p>
-</section>
-<section class="panel">
-  <h2>Detection overview</h2><p class="hint">Counters update after each simulation.</p>
-  <div class="stats"><div class="stat alert"><small>Threat alerts</small><strong id="alerts">0</strong></div><div class="stat"><small>Events logged</small><strong id="logged">0</strong></div><div class="stat safe"><small>Benign events</small><strong id="benign">0</strong></div></div>
-  <div class="status"><span class="dot"></span><span id="statusText" aria-live="polite">Ready. Choose a scenario to begin.</span></div>
-  <div class="actions" style="margin-top:0"><button id="exportBtn" class="btn secondary" type="button">⬇ Export CSV log</button></div>
-</section>
-<section class="panel" style="grid-column:1/-1">
-  <h2>Live event feed</h2><p class="hint">Newest events appear first. All entries are illustrative browser-side demo events.</p>
-  <div id="feed" class="feed" aria-live="polite"><div class="empty" id="empty">No events yet. Choose a scenario and click “Run simulation”.</div></div>
-</section>
-</div>
-<div class="bottom">CyberShield • Educational prototype • Sample events only</div>
-</div>
+:root{--bg:#081321;--panel:#122238;--line:#2b4561;--txt:#edf5ff;--muted:#a4b8d0;--red:#ff667d;--green:#50dda2;--blue:#78bdff;--amber:#ffd17b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top right,#193958,#081321 55%);font:15px system-ui,Arial;color:var(--txt)}.wrap{max-width:1120px;margin:auto;padding:24px 16px}header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}.brand{display:flex;gap:12px;align-items:center}.logo{background:linear-gradient(135deg,#70bdff,#50dda2);color:#071321;border-radius:13px;padding:10px 13px;font-weight:900;font-size:22px}h1{font-size:27px;margin:0}.muted,.hint{color:var(--muted);font-size:12px}.online{color:var(--green);border:1px solid #286d58;padding:7px 11px;border-radius:30px;font-size:11px}.notice{padding:12px;border:1px solid #31516d;background:#122b43;border-radius:10px;font-size:12px;margin-bottom:16px;color:#d1e2f4}.layout{display:grid;grid-template-columns:250px 1fr;gap:15px}.panel{background:#122238ed;border:1px solid var(--line);border-radius:14px;padding:16px}h2{font-size:16px;margin:0 0 5px}.modes{display:grid;gap:8px;margin-top:13px}.mode{background:#192f49;border:1px solid var(--line);color:var(--txt);padding:12px;border-radius:9px;text-align:left;cursor:pointer}.mode b,.mode small{display:block}.mode small{font-size:11px;color:var(--muted);margin-top:4px}.mode.active{border-color:var(--blue);background:#1b3d5b}.btn{border:0;border-radius:8px;padding:10px 13px;font-weight:800;cursor:pointer;font-size:12px}.primary{background:linear-gradient(90deg,#50dda2,#78bdff);color:#061321}.secondary{background:#263d58;color:white;border:1px solid var(--line)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.btn:disabled{opacity:.5}.stage{display:grid;gap:14px}.stagehead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.tag{font-size:10px;background:#1a3a57;color:#a9d9ff;padding:5px 8px;border-radius:5px}.sim{background:#091726;border:1px solid #2a425d;border-radius:11px;padding:14px;min-height:270px}.browser{display:flex;gap:6px;border-bottom:1px solid #293e55;padding-bottom:10px;margin-bottom:12px}.ball{width:8px;height:8px;border-radius:50%;background:#7890a9}.url{background:#172b42;color:#b5c9df;border-radius:5px;padding:4px 9px;font-size:11px;flex:1}.login{max-width:340px;margin:10px auto;text-align:center;background:#142a43;border:1px solid #34516e;border-radius:12px;padding:18px}.login h3{margin:5px}.login p{font-size:11px;color:var(--muted)}input{width:100%;padding:11px;background:#081625;border:1px solid #3a5674;border-radius:7px;color:white;margin:5px 0}.attempt{font:11px monospace;color:#ff9eac;min-height:17px;margin-top:8px}.locked{display:none;color:var(--red);font-weight:800;font-size:12px}.locked.show{display:block}.site{max-width:620px;margin:auto}.banner{background:#193d59;padding:18px;text-align:center;border-radius:9px}.banner h3{margin:0 0 5px}.banner p{margin:0;font-size:12px;color:#c1d5e8}.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.tile{background:#172c44;padding:15px 8px;text-align:center;border-radius:8px;font-size:11px}.tile b{display:block;font-size:15px;margin-bottom:5px}.slow{display:none;background:#422c1b;color:#ffd38a;padding:11px;border-radius:8px;margin-top:10px;text-align:center;font-size:12px}.slow.show{display:block}.barlabel{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin:12px 0 5px}.meter{height:11px;background:#20344b;border-radius:20px;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,#50dda2,#ffd17b,#ff667d);transition:width .3s}.form{max-width:400px;margin:18px auto}.response{background:#142b43;padding:11px;border-radius:8px;margin-top:10px;font-size:12px;min-height:40px}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.metric{background:#0b1929;border:1px solid var(--line);padding:10px;border-radius:9px}.metric small{display:block;color:var(--muted);font-size:10px}.metric b{display:block;font-size:20px;margin-top:3px}.red{color:var(--red)}.green{color:var(--green)}.log{max-height:150px;overflow:auto;display:grid;gap:6px}.entry{background:#0b1929;border-left:3px solid var(--blue);padding:8px;border-radius:6px;font-size:11px;color:#c8d8e8}.entry.alert{border-color:var(--red)}.entry.safe{border-color:var(--green)}.hidden{display:none!important}footer{text-align:center;color:#849bb5;font-size:11px;margin:17px}@media(max-width:760px){.layout{grid-template-columns:1fr}}@media(max-width:430px){.metrics{grid-template-columns:repeat(2,1fr)}.tiles{grid-template-columns:1fr}}
+</style></head><body><div class="wrap">
+<header><div class="brand"><div class="logo">盾</div><div><h1>CyberShield</h1><div class="muted">Live Attack & Threat Detection Lab</div></div></div><div class="online">● SIMULATION ENVIRONMENT</div></header>
+<div class="notice"><b>Safe classroom demo:</b> Everything is simulated inside this browser. No real passwords are tested, no traffic is sent, and no external website is affected.</div>
+<div class="layout"><aside class="panel"><h2>Choose an attack</h2><p class="hint">Select a scenario, then start it.</p>
+<div class="modes">
+<button class="mode active" data-mode="brute"><b>🔐 Brute-force login</b><small>Watch repeated password guesses</small></button>
+<button class="mode" data-mode="flood"><b>🌊 Traffic flood</b><small>Watch website slow under load</small></button>
+<button class="mode" data-mode="sql"><b>🧪 SQL injection</b><small>Inspect suspicious login input</small></button>
+<button class="mode" data-mode="xss"><b>🕸️ XSS attempt</b><small>Detect script-like input</small></button>
+</div><div class="actions"><button class="btn primary" id="start">▶ Start attack</button><button class="btn secondary" id="reset">↻ Reset</button></div></aside>
+<main class="stage"><section class="panel"><div class="stagehead"><div><h2 id="title">Brute-force attack simulation</h2><p class="hint" id="hint">Watch repeated login attempts against a sample website.</p></div><span class="tag" id="tag">LOGIN SECURITY</span></div>
+<div class="sim"><div class="browser"><i class="ball"></i><i class="ball"></i><i class="ball"></i><div class="url">https://demo.cybershield.local</div></div>
+<div id="brute"><div class="login"><div style="font-size:27px">🛡️</div><h3>Secure Portal</h3><p>Example company account sign-in</p><input value="student@example.com" readonly><input id="pass" placeholder="Password guesses appear here" readonly><button class="btn secondary" disabled>Sign in</button><div class="attempt" id="attempt">Waiting for login attempts…</div><div class="locked" id="locked">⛔ Too many attempts — source temporarily blocked!</div></div></div>
+<div id="flood" class="hidden"><div class="site"><div class="banner"><h3 id="siteTitle">Acme Store</h3><p id="siteText">Welcome! Browse our latest products.</p></div><div class="tiles" id="tiles"><div class="tile"><b>Product A</b>Available</div><div class="tile"><b>Product B</b>Available</div><div class="tile"><b>Product C</b>Available</div></div><div class="slow" id="slow">⚠️ Server overloaded — page responses are delayed.</div><div class="barlabel"><span>Incoming request load</span><b id="loadText">0%</b></div><div class="meter"><div class="fill" id="fill"></div></div><div class="barlabel"><span>Simulated response time</span><b id="latency">120 ms</b></div></div></div>
+<div id="inspectView" class="hidden"><div class="form"><h3 id="formTitle">Demo input inspection</h3><p class="hint">Type a harmless example. Nothing is submitted or executed.</p><input id="sample" placeholder="Type sample input here"><button class="btn primary" id="inspect">Inspect input</button><div class="response" id="response">Waiting for input…</div></div></div>
+</div></section>
+<section class="metrics"><div class="metric"><small>ATTACK EVENTS</small><b class="red" id="attacks">0</b></div><div class="metric"><small>GUESSES / REQUESTS</small><b id="requests">0</b></div><div class="metric"><small>DETECTION STATUS</small><b class="green" id="status">Ready</b></div><div class="metric"><small>BLOCKED / FLAGGED</small><b id="blocked">0</b></div></section>
+<section class="panel"><h2>Security event timeline</h2><p class="hint">Events appear here as the demonstration runs.</p><div class="log" id="log"><div class="entry">System ready. Choose an attack scenario.</div></div></section></main></div><footer>CyberShield • Educational visualization • Local simulation only</footer></div>
 <script>
-(function(){
-  'use strict';
-  const scenarios = Array.from(document.querySelectorAll('.scenario'));
-  const runBtn = document.getElementById('runBtn');
-  const clearBtn = document.getElementById('clearBtn');
-  const exportBtn = document.getElementById('exportBtn');
-  const feed = document.getElementById('feed');
-  const alertsEl = document.getElementById('alerts');
-  const loggedEl = document.getElementById('logged');
-  const benignEl = document.getElementById('benign');
-  const statusText = document.getElementById('statusText');
-  const selectedText = document.getElementById('selectedText');
-  let selected = 'brute';
-  let events = [];
-  let alerts = 0;
-  let benign = 0;
-  const names = {brute:'Brute-force login',sql:'SQL injection',xss:'Cross-site scripting (XSS)',normal:'Normal traffic'};
-  const examples = {
-    brute:[
-      ['Failed login burst detected','12 failed login attempts from demo source 192.0.2.24 in 30 seconds.','alert'],
-      ['Authentication threshold exceeded','Illustrative rule triggered: repeated failures exceed configured demo threshold.','alert'],
-      ['Source flagged for review','Demo recommendation: rate-limit login attempts and review authentication logs.','alert']
-    ],
-    sql:[
-      ['Suspicious SQL-like input detected','Sample input pattern resembles a SQL injection attempt; no query was executed.','alert'],
-      ['Input validation alert','Illustrative rule flagged unexpected SQL operators in a form field.','alert'],
-      ['Request marked for review','Demo recommendation: use parameterized queries and server-side input validation.','alert']
-    ],
-    xss:[
-      ['Script-like input detected','Sample text contains markup commonly associated with cross-site scripting; nothing was executed.','alert'],
-      ['Output-encoding warning','Illustrative rule recommends context-aware output encoding.','alert'],
-      ['Request marked for review','Demo recommendation: sanitize/encode untrusted output and apply a Content Security Policy.','alert']
-    ],
-    normal:[
-      ['Successful page request','A normal sample page request was recorded.','safe'],
-      ['Routine session activity','A benign demo session event was recorded.','safe'],
-      ['No suspicious pattern found','The sample request did not match the demonstration alert rules.','safe']
-    ]
-  };
-  function now(){return new Date().toLocaleTimeString();}
-  function addEvent(title, detail, type){
-    const e={time:now(),scenario:names[selected],title,detail,type};
-    events.unshift(e);
-    if(type==='alert') alerts++; else benign++;
-    const card=document.createElement('article');
-    card.className='event '+type;
-    const row=document.createElement('div'); row.className='row';
-    const strong=document.createElement('strong'); strong.textContent=title;
-    const time=document.createElement('time'); time.textContent=e.time;
-    const tag=document.createElement('span'); tag.className='tag '+(type==='safe'?'safe':''); tag.textContent=type==='alert'?'Threat alert':'Benign';
-    row.append(strong,time);
-    const p=document.createElement('p'); p.textContent=detail;
-    card.append(row,tag,p);
-    const empty=document.getElementById('empty'); if(empty) empty.remove();
-    feed.prepend(card);
-    updateStats();
-  }
-  function updateStats(){alertsEl.textContent=alerts;loggedEl.textContent=events.length;benignEl.textContent=benign;}
-  scenarios.forEach(btn=>btn.addEventListener('click',()=>{
-    selected=btn.dataset.kind;
-    scenarios.forEach(b=>b.classList.toggle('active',b===btn));
-    selectedText.textContent='Selected: '+names[selected]+' simulation.';
-    statusText.textContent='Scenario selected. Click Run simulation.';
-  }));
-  runBtn.addEventListener('click',()=>{
-    runBtn.disabled=true; runBtn.textContent='Running…';
-    statusText.textContent='Running '+names[selected]+' demo…';
-    const batch=examples[selected];
-    batch.forEach((item,i)=>setTimeout(()=>addEvent(item[0],item[1],item[2]),i*350));
-    setTimeout(()=>{runBtn.disabled=false;runBtn.textContent='▶ Run simulation';statusText.textContent='Simulation complete: '+names[selected]+'.';},batch.length*350+100);
-  });
-  clearBtn.addEventListener('click',()=>{
-    events=[];alerts=0;benign=0;updateStats();
-    feed.innerHTML='<div class="empty" id="empty">Event feed cleared. Choose a scenario and click “Run simulation”.</div>';
-    statusText.textContent='Event feed cleared. Ready for another simulation.';
-  });
-  exportBtn.addEventListener('click',()=>{
-    if(!events.length){statusText.textContent='Nothing to export yet. Run a simulation first.';return;}
-    const quote=v=>'"'+String(v).replace(/"/g,'""')+'"';
-    const rows=[['Time','Scenario','Event','Details','Type'],...events.map(e=>[e.time,e.scenario,e.title,e.detail,e.type])];
-    const csv=rows.map(row=>row.map(quote).join(',')).join('\r\n');
-    const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-    const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='cybershield-events.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
-    statusText.textContent='CSV event log exported.';
-  });
+(()=>{
+const $=id=>document.getElementById(id);let mode='brute',timers=[],busy=false,attacks=0,requests=0,blocked=0;
+function log(s,t=''){let e=document.createElement('div');e.className='entry '+t;e.textContent=new Date().toLocaleTimeString()+' — '+s;$('log').prepend(e)}
+function stats(s){$('attacks').textContent=attacks;$('requests').textContent=requests;$('blocked').textContent=blocked;$('status').textContent=s}
+function stop(){timers.forEach(clearTimeout);timers=[];busy=false;$('start').disabled=false}
+function later(fn,n){timers.push(setTimeout(fn,n))}
+function reset(){stop();attacks=requests=blocked=0;stats('Ready');$('log').innerHTML='<div class="entry">Ready for a new simulation.</div>';$('pass').value='';$('attempt').textContent='Waiting for login attempts…';$('locked').classList.remove('show');$('fill').style.width='0%';$('loadText').textContent='0%';$('latency').textContent='120 ms';$('slow').classList.remove('show');$('siteTitle').textContent='Acme Store';$('siteText').textContent='Welcome! Browse our latest products.';$('tiles').style.opacity='1';$('sample').value='';$('response').textContent='Waiting for input…';$('start').textContent='▶ Start attack'}
+function finish(msg){busy=false;$('start').disabled=false;$('start').textContent='▶ Run again';stats('Detected');log(msg,'alert')}
+function choose(m){mode=m;reset();document.querySelectorAll('.mode').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));$('brute').classList.toggle('hidden',m!=='brute');$('flood').classList.toggle('hidden',m!=='flood');$('inspectView').classList.toggle('hidden',m==='brute'||m==='flood');let d={brute:['Brute-force attack simulation','Repeated password guesses against a demo login page.','LOGIN SECURITY'],flood:['Traffic flood simulation','Request surge makes the demo website visibly slow.','AVAILABILITY'],sql:['SQL injection detection','Enter a sample string to see input inspection.','INPUT VALIDATION'],xss:['XSS detection simulation','Enter script-like text; it is flagged, never executed.','WEB SECURITY']}[m];$('title').textContent=d[0];$('hint').textContent=d[1];$('tag').textContent=d[2];$('formTitle').textContent=m==='sql'?'Demo login input':'Demo comment input'}
+function start(){if(busy)return;reset();busy=true;$('start').disabled=true;$('start').textContent='Simulation running…';stats('Monitoring');log('Started '+mode+' simulation.');
+if(mode==='brute'){let pw=['123456','password','qwerty','admin123','welcome1','letmein','student123','password123'];pw.forEach((p,i)=>later(()=>{requests++;attacks++;$('pass').value=p;$('attempt').textContent='Attempt '+(i+1)+' of '+pw.length+' — login rejected';stats('Monitoring');log('Failed login attempt '+(i+1)+' from simulated source 192.0.2.24','alert');if(i===4){stats('Alert');log('Repeated authentication failures crossed demo threshold.','alert')}},i*620));later(()=>{blocked++;$('locked').classList.add('show');$('attempt').textContent='Defense: simulated source blocked.';finish('Defensive response: source temporarily blocked.');},pw.length*620+200)}
+if(mode==='flood'){[12,25,43,61,78,94,100].forEach((v,i)=>later(()=>{requests+=v*2;attacks++;$('fill').style.width=v+'%';$('loadText').textContent=v+'%';let ms=120+Math.round(v*v*.42);$('latency').textContent=ms+' ms';stats(v>=75?'Overloaded':'Monitoring');log('Traffic surge: '+v+'% load; simulated response '+ms+' ms.',v>=75?'alert':'');if(v>=78){$('slow').classList.add('show');$('siteTitle').textContent='Acme Store — responding slowly';$('siteText').textContent='High traffic detected. Requests are delayed.'}if(v===100){$('siteTitle').textContent='Service temporarily unavailable';$('siteText').textContent='The simulated server cannot keep up with incoming requests.';$('tiles').style.opacity='.2'}},i*650));later(()=>{blocked++;$('tiles').style.opacity='1';finish('Mitigation suggested: rate limiting and traffic filtering. Demo site restored.');},4900)}
+if(mode==='sql'||mode==='xss'){busy=false;$('start').disabled=false;$('start').textContent='Enter input below ↓';stats('Awaiting input');log('Type a sample string and click Inspect input.')}}
+document.querySelectorAll('.mode').forEach(b=>b.addEventListener('click',()=>choose(b.dataset.mode)));$('start').addEventListener('click',start);$('reset').addEventListener('click',reset);
+$('inspect').addEventListener('click',()=>{let v=$('sample').value;if(!v.trim()){$('response').textContent='Please enter a sample input first.';return}requests++;let bad=mode==='sql'?/('|--|;|\bor\b|\bselect\b|\bunion\b)/i.test(v):/<\s*script|javascript:|onerror\s*=/i.test(v);if(bad){attacks++;blocked++;stats('Threat flagged');$('response').textContent=mode==='sql'?'🚨 SQL-like input detected. Recommendation: parameterized queries and server-side validation.':'🚨 Script-like input detected. It was not executed. Encode output and apply a Content Security Policy.';log('Suspicious '+mode+' sample input flagged; nothing was executed.','alert')}else{stats('No match');$('response').textContent='✅ No suspicious pattern matched this simple demo rule.';log('Input inspected; no demo rule matched.','safe')}});
+choose('brute');
 })();
-</script>
-</body>
-</html>
+</script></body></html>
